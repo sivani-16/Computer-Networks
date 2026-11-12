@@ -1,0 +1,40 @@
+Server File:
+import socket
+server=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+server.bind(('localhost', 8081))
+server.listen(1)
+print("HTTP Server running on http://localhost:8080...")
+while True:
+    conn,addr=server.accept()
+    request=conn.recv(1024).decode()
+    print("--- Recived HTTP Request ---")
+    print(request)
+    http_reponse=(
+        "HTTP/1.1 200 OK\r\n"
+        "Content-Type:text/html;charset=utf-8\r\n"
+        "Connection: close\r\n"
+        "\r\n"
+        "<html><body><h1>welcome to Computer networks Lab!</h1></body></html>"
+    )
+    conn.sendall(http_reponse.encode())
+    conn.close()
+Client File:
+import socket
+client=socket.socket(socket.AF_INET,socket.SOCK_STREAM)
+client.connect(('localhost', 8081))
+http_request = (
+    "GET / HTTP/1.1\r\n"
+    "Host: localhost\r\n"
+    "Connection: close\r\n"
+    "\r\n"
+)
+client.sendall(http_request.encode())
+response=b""
+while True:
+    chunk = client.recv(1024)
+    if not chunk:
+        break
+    response += chunk
+print("--- Recevied HTTP Response ---")
+print(response.decode())
+client.close()
